@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
   mode: 'production',
-  entry: './browser.js',
+  entry: './src/browser.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'shepherd.bundle.js'
