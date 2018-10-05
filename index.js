@@ -1,3 +1,5 @@
+import 'unfetch/polyfill';
+
 import CBrowser from './browser'
 
 
