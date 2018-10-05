@@ -32,6 +32,7 @@ export default function CBrowser(reqid, target_div, init_params) {
   var maxRetry = 10;
   var retryCount = 0;
   var retryHandle = null;
+  var stagedText = null;
   var timers = []
 
   var min_width = 800;
@@ -74,8 +75,6 @@ export default function CBrowser(reqid, target_div, init_params) {
     init_html(target_div);
 
     setup_browser();
-
-    init_clipboard();
   }
 
   function clipHandler(evt) {
@@ -100,6 +99,12 @@ export default function CBrowser(reqid, target_div, init_params) {
     lose_focus();
     hasClipboard = true;
     var lastText = undefined;
+
+    // if remote browser cut/copy opperation occured, insert into clipboard field
+    if (stagedText) {
+        document.querySelector(init_params.clipboard).value = stagedText;
+        stagedText = null;
+    }
 
     for (var i = 0; i < clipEvents.length; i++) {
       document.querySelector(init_params.clipboard).addEventListener(clipEvents[i], clipHandler);
@@ -382,8 +387,10 @@ export default function CBrowser(reqid, target_div, init_params) {
   }
 
   function onVNCCopyCut(rfb, text) {
-    if (init_params.clipboard) {
-      document.querySelector(init_params.clipboard).innerHTML = (text);
+    if (init_params.clipboard && hasClipboard) {
+      // document.querySelector(init_params.clipboard).innerHTML = (text);
+    } else if(init_params.clipboard) {
+      stagedText = text;
     }
   }
 
