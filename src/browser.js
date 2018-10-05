@@ -1,3 +1,4 @@
+import 'unfetch/polyfill';
 import RFB from '@novnc/novnc/core/rfb';
 import Promise from 'promise-polyfill';
 import { WSAudio, getBestAudioType } from './audio';
@@ -331,7 +332,7 @@ export default function CBrowser(reqid, target_div, init_params) {
   }
 
   function lose_focus() {
-    if (rfb) return;
+    if (!rfb) return;
     rfb._keyboard.ungrab();
     rfb._mouse.ungrab();
   }
