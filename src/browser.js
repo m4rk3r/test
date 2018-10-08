@@ -96,7 +96,7 @@ export default function CBrowser(reqid, target_div, init_params) {
       return;
     }
 
-    lose_focus();
+    //lose_focus();
     hasClipboard = true;
     var lastText = undefined;
 
@@ -116,7 +116,7 @@ export default function CBrowser(reqid, target_div, init_params) {
       return;
     }
 
-    grab_focus();
+    //grab_focus();
     hasClipboard = false;
 
     // clipboard DOM node is removed before destroy fires, so listeners should be removed automatically
@@ -155,10 +155,10 @@ export default function CBrowser(reqid, target_div, init_params) {
 
     canvasEle.style.display = 'none';
 
-    canvasDiv.addEventListener('blur', lose_focus);
-    canvasDiv.addEventListener('mouseleave', lose_focus);
-    canvasDiv.addEventListener('mouseenter', grab_focus);
-    canvasEle.addEventListener('click', grab_focus);
+    // canvasDiv.addEventListener('blur', lose_focus);
+    // canvasDiv.addEventListener('mouseleave', lose_focus);
+    // canvasDiv.addEventListener('mouseenter', grab_focus);
+    // canvasEle.addEventListener('click', grab_focus);
   }
 
   function setup_browser() {
@@ -568,7 +568,7 @@ export default function CBrowser(reqid, target_div, init_params) {
     }
 
     // ensure focus is freed
-    lose_focus();
+    //lose_focus();
 
     if (rfb) {
       rfb.removeEventListener("credentialsrequired", credentialsRequired);
@@ -582,10 +582,10 @@ export default function CBrowser(reqid, target_div, init_params) {
     var cnvs = canvas();
     var _screen = screen();
 
-    _screen.removeEventListener('blur', lose_focus);
-    _screen.removeEventListener('mouseleave', lose_focus);
-    _screen.removeEventListener('mouseenter', grab_focus);
-    cnvs.removeEventListener('click', grab_focus);
+    // _screen.removeEventListener('blur', lose_focus);
+    // _screen.removeEventListener('mouseleave', lose_focus);
+    // _screen.removeEventListener('mouseenter', grab_focus);
+    // cnvs.removeEventListener('click', grab_focus);
 
     clearTimers();
 
