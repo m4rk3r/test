@@ -96,7 +96,6 @@ export default function CBrowser(reqid, target_div, init_params) {
       return;
     }
 
-    //lose_focus();
     hasClipboard = true;
     var lastText = undefined;
 
@@ -116,7 +115,6 @@ export default function CBrowser(reqid, target_div, init_params) {
       return;
     }
 
-    //grab_focus();
     hasClipboard = false;
 
     // clipboard DOM node is removed before destroy fires, so listeners should be removed automatically
@@ -154,11 +152,6 @@ export default function CBrowser(reqid, target_div, init_params) {
     targetDivNode.appendChild(canvasDiv);
 
     canvasEle.style.display = 'none';
-
-    // canvasDiv.addEventListener('blur', lose_focus);
-    // canvasDiv.addEventListener('mouseleave', lose_focus);
-    // canvasDiv.addEventListener('mouseenter', grab_focus);
-    // canvasEle.addEventListener('click', grab_focus);
   }
 
   function setup_browser() {
@@ -227,7 +220,13 @@ export default function CBrowser(reqid, target_div, init_params) {
 
     // expects json response
     fetch(init_url, options)
-      .then(function (res) { return res.json(); })
+      .then(function (res) {
+        if (!res.ok) {
+          throw Error({ status: res.status });
+        }
+
+        return res.json();
+      })
       .then(function (data) {
         waiting_for_container = false;
         handle_browser_response(data);
@@ -241,8 +240,8 @@ export default function CBrowser(reqid, target_div, init_params) {
           return;
         }
 
-        if (!err || err.status !== 404) {
-          msgdiv().innerHTML = 'Reconnection to Remote Browser...';
+        if (!err || err.status != 404) {
+          msgdiv().innerHTML = 'Reconnecting to Remote Browser...';
           msgdiv().style.display = 'block';
 
           if(retryCount++ < maxRetry) {
@@ -336,29 +335,6 @@ export default function CBrowser(reqid, target_div, init_params) {
       })
   }
 
-  function lose_focus() {
-    if (!rfb) return;
-    rfb._keyboard.ungrab();
-    rfb._mouse.ungrab();
-  }
-
-  function grab_focus() {
-    if (!rfb) return;
-
-    if (document.activeElement &&
-      (document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA")) {
-      lose_focus();
-      return;
-    }
-
-    if (init_params.fill_window) {
-      canvas().focus();
-    }
-
-    rfb._keyboard.grab();
-    rfb._mouse.grab();
-  }
-
   function clientPosition() {
     const bcr = targetDivNode.getBoundingClientRect();
     var c = canvas();
@@ -427,6 +403,8 @@ export default function CBrowser(reqid, target_div, init_params) {
 
     var promise = new Promise(function (resolve, reject) {
       rfb = new RFB(target, webservice_url, {'credentials': {'password': vnc_pass}});
+      window.rfb = rfb;
+
       //if (!rfbEventsBound) {
       credentialsRequired = function () {
         reject("credentialsrequired");
@@ -567,9 +545,6 @@ export default function CBrowser(reqid, target_div, init_params) {
       controller.abort();
     }
 
-    // ensure focus is freed
-    //lose_focus();
-
     if (rfb) {
       rfb.removeEventListener("credentialsrequired", credentialsRequired);
       rfb.removeEventListener("connect", connect);
@@ -582,11 +557,6 @@ export default function CBrowser(reqid, target_div, init_params) {
     var cnvs = canvas();
     var _screen = screen();
 
-    // _screen.removeEventListener('blur', lose_focus);
-    // _screen.removeEventListener('mouseleave', lose_focus);
-    // _screen.removeEventListener('mouseenter', grab_focus);
-    // cnvs.removeEventListener('click', grab_focus);
-
     clearTimers();
 
     document.removeEventListener("visibilitychange", visibilityChangeCB);
@@ -597,8 +567,6 @@ export default function CBrowser(reqid, target_div, init_params) {
   return {
     "close": close,
     "destroy_clipboard": destroy_clipboard,
-    "grab_focus": grab_focus,
-    "init_clipboard": init_clipboard,
-    "lose_focus": lose_focus
-  }
+    "init_clipboard": init_clipboard
+   }
 }
