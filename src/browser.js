@@ -90,10 +90,10 @@ export default function CBrowser(reqid, target_div, init_params) {
       console.log('pasting', text);
       rfb.clipboardPasteFrom(text);
       // attempt sending paste command
-      rfb.sendKey(17, 'ControlLeft', true);
-      rfb.sendKey(86, 'v', true);
-      rfb.sendKey(86, 'v', false);
-      rfb.sendKey(17, 'ControlLeft', false);
+      rfb.sendKey(0xffe3, null, true);
+      rfb.sendKey(0x0076, null, true);
+      rfb.sendKey(0x0076, null, false);
+      rfb.sendKey(0xffe3, null, false);
     }
   }
 
