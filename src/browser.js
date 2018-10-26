@@ -89,7 +89,6 @@ export default function CBrowser(reqid, target_div, init_params) {
     //if (connected && rfb) { // && lastText !== text) {
       // TODO: see `onVNCCopyCut()`
       console.log('pasting', text);
-      rfb.focus();
       rfb.clipboardPasteFrom(text);
       lastText = text;
     //}
