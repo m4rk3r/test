@@ -78,17 +78,15 @@ export default function CBrowser(reqid, target_div, init_params) {
   }
 
   function clipHandler(evt) {
-    console.log('clipHandler', evt);
     if (!hasClipboard) {
       return false;
     }
 
     var text = evt.clipboardData.getData('Text');
-    console.log(connected, rfb, evt.clipboardData, text);
 
     if (connected && rfb) {
-      console.log('pasting', text);
       rfb.clipboardPasteFrom(text);
+
       // attempt sending paste command
       rfb.sendKey(0xffe3, null, true);
       rfb.sendKey(0x0076, null, true);
