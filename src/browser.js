@@ -86,13 +86,13 @@ export default function CBrowser(reqid, target_div, init_params) {
     var text = evt.clipboardData.getData('Text');
     console.log(connected, rfb, evt.clipboardData, text);
 
-    if (connected && rfb) { // && lastText !== text) {
+    //if (connected && rfb) { // && lastText !== text) {
       // TODO: see `onVNCCopyCut()`
       console.log('pasting', text);
       rfb.focus();
       rfb.clipboardPasteFrom(text);
       lastText = text;
-    }
+    //}
   }
 
   function init_clipboard() {
