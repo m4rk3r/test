@@ -454,7 +454,7 @@ export default function CBrowser(reqid, target_div, init_params) {
       }
 
       clipboard = function (event) {
-        onVNCCopyCut(rfb, event.text)
+        onVNCCopyCut(rfb, event.detail.text);
       }
 
       rfb.addEventListener("credentialsrequired", credentialsRequired);
