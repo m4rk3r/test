@@ -84,7 +84,7 @@ export default function CBrowser(reqid, target_div, init_params) {
     }
 
     var text = evt.clipboardData.getData('Text');
-    console.log(evt.clipboardData, text);
+    console.log(connected, rfb, evt.clipboardData, text);
 
     if (connected && rfb) { // && lastText !== text) {
       // TODO: see `onVNCCopyCut()`
