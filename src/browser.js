@@ -78,13 +78,15 @@ export default function CBrowser(reqid, target_div, init_params) {
   }
 
   function clipHandler(evt) {
+    console.log('clipHandler', evt);
     if (!hasClipboard) {
       return false;
     }
 
     var text = evt.clipboardData.getData('Text');
+    console.log(evt.clipboardData, text);
 
-    if (connected && rfb && lastText !== text) {
+    if (connected && rfb) { // && lastText !== text) {
       // TODO: see `onVNCCopyCut()`
       rfb.clipboardPasteFrom(text);
       lastText = text;
@@ -97,7 +99,7 @@ export default function CBrowser(reqid, target_div, init_params) {
     }
 
     hasClipboard = true;
-    var lastText = undefined;
+    lastText = undefined;
 
     // if remote browser cut/copy opperation occured, insert into clipboard field
     if (stagedText) {
