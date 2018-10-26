@@ -92,8 +92,8 @@ export default function CBrowser(reqid, target_div, init_params) {
       // attempt sending paste command
       rfb.sendKey(17, 'ControlLeft', true);
       rfb.sendKey(86, 'v', true);
-      rfb.sendKey(17, 'ControlLeft', false);
       rfb.sendKey(86, 'v', false);
+      rfb.sendKey(17, 'ControlLeft', false);
     }
   }
 
