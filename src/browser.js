@@ -103,6 +103,7 @@ export default function CBrowser(reqid, target_div, init_params) {
     hasClipboard = true;
     lastText = undefined;
 
+    /*
     // if remote browser cut/copy opperation occured, insert into clipboard field
     if (stagedText) {
         document.querySelector(init_params.clipboard).value = stagedText;
@@ -111,7 +112,8 @@ export default function CBrowser(reqid, target_div, init_params) {
 
     for (var i = 0; i < clipEvents.length; i++) {
       document.querySelector(init_params.clipboard).addEventListener(clipEvents[i], clipHandler);
-    }
+    }*/
+
   }
 
   function destroy_clipboard() {
@@ -374,6 +376,18 @@ export default function CBrowser(reqid, target_div, init_params) {
     }
   }
 
+  function documentPaste(e) {
+    rfb.clipboardPasteFrom(e.clipboardData.getData('text'));
+  }
+
+  function documentKeyPress(e) {
+    if (e.keyCode !== 86) e.preventDefault();
+    setTimeout(function() {
+      canvas().dispatchEvent(new e.constructor(e.type, e));
+      rfb.focus();
+    }, 1);
+  }
+
   function do_vnc() {
     if (waiting_for_vnc) {
       return;
@@ -415,10 +429,11 @@ export default function CBrowser(reqid, target_div, init_params) {
       }
 
       connect = function () {
-        canvas().style.display = 'block';
+        var c = canvas();
+        c.style.display = 'block';
 
         if (init_params.fill_window) {
-          canvas().focus();
+          c.focus();
         }
 
         msgdiv().style.display = 'none';
@@ -432,6 +447,24 @@ export default function CBrowser(reqid, target_div, init_params) {
         }
         rfb.resizeSession = true;
         rfb.scaleViewport = true;
+
+        document.body.addEventListener('paste', documentPaste);
+        document.body.addEventListener('keydown', documentKeyPress);
+        document.body.addEventListener('keyup', documentKeyPress);
+
+        c.addEventListener('keydown', (e) => {
+          if (e.ctrlKey) document.activeElement.blur();
+        });
+
+        c.addEventListener('keyup', (e) => {
+          if (e.ctrlKey && [67, 88].includes(e.keyCode)) {
+            var cb = document.querySelector(init_params.clipboard);
+            cb.focus();
+            cb.select();
+            document.execCommand('copy');
+            rfb.focus();
+          }
+        });
 
         resolve("connected");
       }
@@ -458,7 +491,8 @@ export default function CBrowser(reqid, target_div, init_params) {
       }
 
       clipboard = function (event) {
-        onVNCCopyCut(rfb, event.detail.text);
+        //onVNCCopyCut(rfb, event.detail.text);
+        document.querySelector(init_params.clipboard).value = event.detail.text;
       }
 
       rfb.addEventListener("credentialsrequired", credentialsRequired);
@@ -466,8 +500,6 @@ export default function CBrowser(reqid, target_div, init_params) {
       rfb.addEventListener("disconnect", disconnect);
       rfb.addEventListener("securityfailure", securityFailure);
       rfb.addEventListener("clipboard", clipboard);
-      //   rfbEventsBound = true;
-      // }
     });
 
     return promise;
@@ -558,12 +590,16 @@ export default function CBrowser(reqid, target_div, init_params) {
       rfb.disconnect();
     }
 
+    document.body.removeEventListener('paste', documentPaste);
+
     var cnvs = canvas();
     var _screen = screen();
 
     clearTimers();
 
     document.removeEventListener("visibilitychange", visibilityChangeCB);
+    document.body.removeEventListener('keydown', documentKeyPress);
+    document.body.removeEventListener('keyup', documentKeyPress);
   }
 
   start();
